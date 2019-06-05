@@ -13,6 +13,11 @@ var FONT_GAP = 15;
 var BAR_WIDTH = 40;
 var SPACE_BETWEEN_BARS = 50;
 var MAX_BAR_HEIGHT = 150;
+var TEXT_COLOR = '#000';
+var RESULT_CLOUD_COLOR = '#fff';
+var SHADOW_COLOR = 'rgba(0, 0, 0, 0.7)';
+var TEXT_FONT = '16px PT Mono';
+var MAIN_RESULT_COLOR = 'rgba(255, 0, 0, 1)';
 
 var renderCloud = function (ctx, x, y, color) {
   ctx.fillStyle = color;
@@ -31,33 +36,36 @@ var getMaxElement = function (arr) {
   return maxElement;
 };
 
-window.renderStatistics = function (ctx, players, times) {
-  renderCloud(ctx, CLOUD_X + GAP, CLOUD_Y + GAP, 'rgba(0, 0, 0, 0.7)');
-  renderCloud(ctx, CLOUD_X, CLOUD_Y, '#fff');
+var getRandomBetween = function (min, max) {
+  return min + (max - min) * Math.random();
+};
 
-  ctx.fillStyle = '#000';
-  ctx.font = '16px PT Mono';
+window.renderStatistics = function (ctx, players, times) {
+  renderCloud(ctx, CLOUD_X + GAP, CLOUD_Y + GAP, SHADOW_COLOR);
+  renderCloud(ctx, CLOUD_X, CLOUD_Y, RESULT_CLOUD_COLOR);
+
+  ctx.fillStyle = TEXT_COLOR;
+  ctx.font = TEXT_FONT;
   ctx.fillText('Ура вы победили!', CLOUD_X + TITLE_GAP_X, CLOUD_Y + TITLE_GAP_Y + FONT_GAP);
   ctx.fillText('Список результатов:', CLOUD_X + TITLE_GAP_X, CLOUD_Y + TITLE_GAP_Y + FONT_GAP * 2 + GAP / 2);
 
   var maxTime = getMaxElement(times);
 
   for (var i = 0; i < players.length; i++) {
-    ctx.fillStyle = '#000';
+    ctx.fillStyle = TEXT_COLOR;
     ctx.fillText(players[i], CLOUD_X + CONTENT_GAP_X + (BAR_WIDTH + SPACE_BETWEEN_BARS) * i, CLOUD_Y + CLOUD_HEIGHT - CONTENT_GAP_Y);
 
     if (players[i] === 'Вы') {
-      ctx.fillStyle = 'rgba(255, 0, 0, 1)';
+      ctx.fillStyle = MAIN_RESULT_COLOR;
     } else {
-      var saturate = (Math.random() * 100);
-      ctx.fillStyle = 'hsl(240, ' + saturate + '%, 50%)';
+      ctx.fillStyle = 'hsl(240, ' + getRandomBetween(0, 100) + '%, 50%)';
     }
 
     var barHeight = MAX_BAR_HEIGHT * times[i] / maxTime;
 
     ctx.fillRect(CLOUD_X + CONTENT_GAP_X + (BAR_WIDTH + SPACE_BETWEEN_BARS) * i, CLOUD_Y + CLOUD_HEIGHT - (CONTENT_GAP_Y + FONT_GAP + GAP / 2), BAR_WIDTH, -barHeight);
 
-    ctx.fillStyle = '#000';
+    ctx.fillStyle = TEXT_COLOR;
     ctx.fillText(Math.floor(times[i]), CLOUD_X + CONTENT_GAP_X + (BAR_WIDTH + SPACE_BETWEEN_BARS) * i, CLOUD_Y + CLOUD_HEIGHT - (CONTENT_GAP_Y + FONT_GAP + GAP / 2 + barHeight + GAP));
   }
 
