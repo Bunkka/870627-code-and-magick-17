@@ -18,6 +18,7 @@ var RESULT_CLOUD_COLOR = '#fff';
 var SHADOW_COLOR = 'rgba(0, 0, 0, 0.7)';
 var TEXT_FONT = '16px PT Mono';
 var MAIN_RESULT_COLOR = 'rgba(255, 0, 0, 1)';
+var TITLE_TEXT = 'Ура вы победили!\nСписок результатов:';
 
 var renderCloud = function (ctx, x, y, color) {
   ctx.fillStyle = color;
@@ -40,14 +41,20 @@ var getRandomBetween = function (min, max) {
   return min + (max - min) * Math.random();
 };
 
+var renderText = function (ctx, text, x, y) {
+  var arrayOfStrings = text.split('\n');
+  for (var i = 0; i < arrayOfStrings.length; i++) {
+    ctx.fillText(arrayOfStrings[i], x, y + FONT_GAP + (FONT_GAP + GAP / 2) * i);
+  }
+};
+
 window.renderStatistics = function (ctx, players, times) {
   renderCloud(ctx, CLOUD_X + GAP, CLOUD_Y + GAP, SHADOW_COLOR);
   renderCloud(ctx, CLOUD_X, CLOUD_Y, RESULT_CLOUD_COLOR);
 
   ctx.fillStyle = TEXT_COLOR;
   ctx.font = TEXT_FONT;
-  ctx.fillText('Ура вы победили!', CLOUD_X + TITLE_GAP_X, CLOUD_Y + TITLE_GAP_Y + FONT_GAP);
-  ctx.fillText('Список результатов:', CLOUD_X + TITLE_GAP_X, CLOUD_Y + TITLE_GAP_Y + FONT_GAP * 2 + GAP / 2);
+  renderText(ctx, TITLE_TEXT, CLOUD_X + TITLE_GAP_X, CLOUD_Y + TITLE_GAP_Y);
 
   var maxTime = getMaxElement(times);
 
