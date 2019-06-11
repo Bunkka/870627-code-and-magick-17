@@ -47,9 +47,9 @@ var renderCharacter = function (character) {
 };
 
 var fragment = document.createDocumentFragment();
-for (var i = 0; i < characters.length; i++) {
-  fragment.appendChild(renderCharacter(characters[i]));
-}
+characters.forEach(function (elem) {
+  fragment.appendChild(renderCharacter(elem));
+});
 
 document.querySelector('.setup').classList.remove('hidden');
 
