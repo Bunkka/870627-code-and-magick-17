@@ -33,6 +33,26 @@ var createArrayOfCharacters = function (number) {
   return arr;
 };
 
+var characters = createArrayOfCharacters(NUMBER_OF_CHARACTERS);
+
+var similarWizardTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
+
+var renderCharacter = function (character) {
+  var characterElement = similarWizardTemplate.cloneNode(true);
+  characterElement.querySelector('.setup-similar-label').textContent = character.name;
+  characterElement.querySelector('.wizard-coat').style.fill = character.coatColor;
+  characterElement.querySelector('.wizard-eyes').style.fill = character.eyesColor;
+
+  return characterElement;
+};
+
+var fragment = document.createDocumentFragment();
+for (var i = 0; i < characters.length; i++) {
+  fragment.appendChild(renderCharacter(characters[i]));
+}
+
 document.querySelector('.setup').classList.remove('hidden');
 
-console.log(createArrayOfCharacters(NUMBER_OF_CHARACTERS));
+document.querySelector('.setup-similar-list').appendChild(fragment);
+
+document.querySelector('.setup-similar').classList.remove('hidden');
