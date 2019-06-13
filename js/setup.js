@@ -37,8 +37,8 @@ var characters = createArrayOfCharacters(NUMBER_OF_CHARACTERS);
 
 var similarWizardTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
 
-var renderCharacter = function (character) {
-  var characterElement = similarWizardTemplate.cloneNode(true);
+var renderCharacter = function (character, template) {
+  var characterElement = template.cloneNode(true);
   characterElement.querySelector('.setup-similar-label').textContent = character.name;
   characterElement.querySelector('.wizard-coat').style.fill = character.coatColor;
   characterElement.querySelector('.wizard-eyes').style.fill = character.eyesColor;
@@ -48,7 +48,7 @@ var renderCharacter = function (character) {
 
 var fragment = document.createDocumentFragment();
 characters.forEach(function (elem) {
-  fragment.appendChild(renderCharacter(elem));
+  fragment.appendChild(renderCharacter(elem, similarWizardTemplate));
 });
 
 document.querySelector('.setup').classList.remove('hidden');
