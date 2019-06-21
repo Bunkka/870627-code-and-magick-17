@@ -52,6 +52,8 @@ var onSetupEscPress = function (evt) {
 };
 
 var openSetup = function () {
+  setupForm.style.top = '';
+  setupForm.style.left = '';
   setupForm.classList.remove('hidden');
   setupForm.querySelector('.setup-similar').classList.remove('hidden');
 
@@ -99,12 +101,15 @@ var setupOpenIcon = setupOpenButton.querySelector('.setup-open-icon');
 var setupForm = document.querySelector('.setup');
 var setupCloseButton = setupForm.querySelector('.setup-close');
 var userNameField = setupForm.querySelector('.setup-user-name');
-var userNameInput = setupForm.querySelector('.setup-user-name');
 
 var setupPlayer = document.querySelector('.setup-player');
 var wizardCoat = setupPlayer.querySelector('.setup-wizard .wizard-coat');
 var wizardEyes = setupPlayer.querySelector('.setup-wizard .wizard-eyes');
 var fireballWrap = setupPlayer.querySelector('.setup-fireball-wrap');
+
+var dialogHandler = setupForm.querySelector('.upload');
+
+var artifactsCells = setupForm.querySelectorAll('.setup-artifacts-cell');
 
 setupOpenButton.addEventListener('click', function () {
   openSetup();
@@ -146,14 +151,80 @@ fireballWrap.addEventListener('click', function () {
   changeFireballColor();
 });
 
-userNameInput.addEventListener('invalid', function () {
-  if (userNameInput.validity.tooShort) {
-    userNameInput.setCustomValidity('Имя должно состоять минимум из 2-х символов');
-  } else if (userNameInput.validity.tooLong) {
-    userNameInput.setCustomValidity('Имя не должно превышать 25-ти символов');
-  } else if (userNameInput.validity.valueMissing) {
-    userNameInput.setCustomValidity('Обязательное поле');
+userNameField.addEventListener('invalid', function () {
+  if (userNameField.validity.tooShort) {
+    userNameField.setCustomValidity('Имя должно состоять минимум из 2-х символов');
+  } else if (userNameField.validity.tooLong) {
+    userNameField.setCustomValidity('Имя не должно превышать 25-ти символов');
+  } else if (userNameField.validity.valueMissing) {
+    userNameField.setCustomValidity('Обязательное поле');
   } else {
-    userNameInput.setCustomValidity('');
+    userNameField.setCustomValidity('');
   }
 });
+
+dialogHandler.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+
+  var startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+  var dragged = 0;
+
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    dragged++;
+
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+
+    setupForm.style.top = (setupForm.offsetTop - shift.y) + 'px';
+    setupForm.style.left = (setupForm.offsetLeft - shift.x) + 'px';
+  };
+
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+
+    if (dragged > 1) {
+      var onClickPreventDefault = function (draggedEvt) {
+        draggedEvt.preventDefault();
+        dialogHandler.removeEventListener('click', onClickPreventDefault);
+      };
+
+      dialogHandler.addEventListener('click', onClickPreventDefault);
+    }
+  };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+});
+
+for (var i = 0; i < artifactsCells.length; i++) {
+  (function (cell) {
+    cell.addEventListener('mousedown', function (downEvt) {
+      downEvt.preventDefault();
+      if (cell.children[0]) {
+        var onDropCellMouseUp = function (upEvt) {
+          upEvt.preventDefault();
+          if (upEvt.target.classList.contains('setup-artifacts-cell')) {
+            upEvt.target.appendChild(cell.children[0]);
+          }
+          document.removeEventListener('mouseup', onDropCellMouseUp);
+        };
+        document.addEventListener('mouseup', onDropCellMouseUp);
+      }
+    });
+  })(artifactsCells[i]);
+}
