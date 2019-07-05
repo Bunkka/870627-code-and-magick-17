@@ -7,6 +7,7 @@
   var setupCloseButton = window.util.setupForm.querySelector('.setup-close');
   var setupSimilar = window.util.setupForm.querySelector('.setup-similar');
   var userNameField = window.util.setupForm.querySelector('.setup-user-name');
+  var setupWizardForm = window.util.setupForm.querySelector('.setup-wizard-form');
 
   var openSetup = function () {
     window.util.setupForm.classList.remove('hidden');
@@ -22,6 +23,7 @@
     userNameField.addEventListener('focus', onUserNameFieldFocus);
     userNameField.addEventListener('blur', onUserNameFieldBlur);
     userNameField.addEventListener('invalid', onUserNameInvalid);
+    setupWizardForm.addEventListener('submit', onSetupWizardFormSubmit);
   };
 
   var onSetupCloseButtonEnterPress = function (evt) {
@@ -51,6 +53,7 @@
     userNameField.removeEventListener('focus', onUserNameFieldFocus);
     userNameField.removeEventListener('blur', onUserNameFieldBlur);
     userNameField.removeEventListener('invalid', onUserNameInvalid);
+    setupWizardForm.removeEventListener('submit', onSetupWizardFormSubmit);
   };
 
   setupOpenButton.addEventListener('click', function () {
@@ -83,7 +86,40 @@
     }
   };
 
-  var characters = window.data.createArrayOfCharacters(window.util.NUMBER_OF_SIMILAR_CHARACTERS);
+  var onArrayOfCharactersLoad = function (arr) {
+    var arrForRender = [];
+    for (var i = 0; i < window.util.NUMBER_OF_SIMILAR_CHARACTERS; i++) {
+      arrForRender.push(window.util.getRandomElementFromArray(arr));
+    }
+    window.render.renderArrayOfCharacters(arrForRender);
+  };
 
-  window.render.renderArrayOfCharacters(characters);
+  var onError = function (errorMessage) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 100; text-align: center; background-color: rgba(0, 0, 0, 0.5);';
+    node.style.position = 'fixed';
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.top = 0;
+    node.style.bottom = 0;
+    node.style.color = 'red';
+    node.style.fontWeight = 'bold';
+    node.style.fontSize = '60px';
+
+    node.textContent = errorMessage;
+    document.body.appendChild(node);
+  };
+
+  var onSetupWizardFormSubmit = function (evt) {
+    evt.preventDefault();
+    setupWizardForm.querySelector('.setup-submit').disabled = true;
+    window.backend.save(new FormData(setupWizardForm), onSaveFormDataSuccess, onError);
+  };
+
+  var onSaveFormDataSuccess = function () {
+    setupWizardForm.querySelector('.setup-submit').disabled = false;
+    closeSetup();
+  };
+
+  window.backend.load(onArrayOfCharactersLoad, onError);
 })();

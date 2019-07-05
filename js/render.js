@@ -4,8 +4,8 @@
   var renderCharacter = function (character, template) {
     var characterElement = template.cloneNode(true);
     characterElement.querySelector('.setup-similar-label').textContent = character.name;
-    characterElement.querySelector('.wizard-coat').style.fill = character.coatColor;
-    characterElement.querySelector('.wizard-eyes').style.fill = character.eyesColor;
+    characterElement.querySelector('.wizard-coat').style.fill = character.colorCoat;
+    characterElement.querySelector('.wizard-eyes').style.fill = character.colorEyes;
 
     return characterElement;
   };
